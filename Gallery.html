@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html class="light" lang="th">
+<head>
+    <meta charset="utf-8" />
+    <title>Gallery - BlackOps BB</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="assets/js/tailwind-config.js"></script>
+</head>
+<body class="bg-gray-100 min-h-screen">
+    <nav class="bg-white shadow-sm p-4 sticky top-0 z-50">
+        <div class="container mx-auto flex justify-between items-center">
+            <span class="font-black text-xl">GALLERY</span>
+            <a href="index.html" class="text-sm font-bold">Close</a>
+        </div>
+    </nav>
+
+    <div class="container mx-auto px-4 py-8">
+        <div class="columns-2 md:columns-3 lg:columns-4 gap-4 space-y-4" id="gallery-grid">
+            <!-- JS Will Inject Images Here -->
+        </div>
+    </div>
+
+    <script type="module">
+        import { getProductsDB } from './assets/js/products-utils.js';
+        
+        const products = getProductsDB();
+        const grid = document.getElementById('gallery-grid');
+        
+        grid.innerHTML = products.map(p => `
+            <div class="break-inside-avoid relative group overflow-hidden rounded-lg">
+                <img src="${p.image}" class="w-full h-auto object-cover transform transition duration-500 group-hover:scale-110">
+                <div class="absolute inset-0 bg-black/50 opacity-0 group-hover:opacity-100 transition flex items-center justify-center text-white font-bold">
+                    ${p.name}
+                </div>
+            </div>
+        `).join('');
+    </script>
+</body>
+</html>

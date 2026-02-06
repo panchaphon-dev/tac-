@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ตะกร้าสินค้า - BlackOps BB</title>
+    <link href="https://fonts.googleapis.com/css2?family=Work+Sans:wght@300;400;600;800&family=Noto+Sans+Thai:wght@300;400;600&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined" rel="stylesheet">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="assets/js/tailwind-config.js"></script>
+    <link rel="stylesheet" href="assets/css/style.css">
+</head>
+<body class="bg-gray-50 text-gray-900 font-display">
+
+    <div class="max-w-6xl mx-auto px-4 py-12">
+        <a href="products.html" class="inline-flex items-center gap-2 text-gray-500 hover:text-black mb-8 font-bold"><span class="material-symbols-outlined">arrow_back</span> กลับไปเลือกซื้อสินค้า</a>
+        <h1 class="text-4xl font-black uppercase mb-8">ตะกร้าสินค้า</h1>
+
+        <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+            <!-- Items -->
+            <div class="lg:col-span-2 space-y-4" id="cart-list"></div>
+
+            <!-- Summary -->
+            <div class="bg-white p-8 rounded-2xl shadow-sm border h-fit sticky top-10">
+                <h2 class="font-bold text-xl mb-6">สรุปคำสั่งซื้อ</h2>
+                <div class="flex justify-between mb-4 text-gray-600">
+                    <span>ยอดรวมสินค้า</span>
+                    <span id="subtotal" class="font-bold">฿0</span>
+                </div>
+                <div class="flex justify-between mb-6 text-gray-600">
+                    <span>ค่าจัดส่ง</span>
+                    <span class="font-bold text-green-600">ฟรี</span>
+                </div>
+                <div class="border-t pt-4 flex justify-between items-center mb-8">
+                    <span class="font-bold text-lg">ยอดสุทธิ</span>
+                    <span id="total" class="font-black text-2xl">฿0</span>
+                </div>
+
+                <div class="space-y-4">
+                    <div>
+                        <label class="block text-xs font-bold text-gray-500 uppercase mb-1">ข้อมูลจัดส่ง</label>
+                        <textarea id="address" rows="3" class="w-full border rounded-lg p-3 bg-gray-50 focus:ring-2 focus:ring-black outline-none" placeholder="ชื่อ - ที่อยู่ - เบอร์โทรศัพท์..."></textarea>
+                    </div>
+                    <button onclick="checkout()" class="w-full bg-black text-white py-4 rounded-xl font-bold hover:bg-gray-800 transition-all shadow-lg active:scale-95">ยืนยันการสั่งซื้อ</button>
+                    <button onclick="App.cart.clear(); location.reload()" class="w-full text-red-500 text-sm hover:underline">ล้างตะกร้าสินค้า</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="assets/js/data.js"></script>
+    <script src="assets/js/main.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const cart = App.db.cart();
+            const container = document.getElementById('cart-list');
+            
+            if(cart.length === 0) {
+                container.innerHTML = `
+                    <div class="text-center py-20 bg-white rounded-2xl border border-dashed border-gray-300">
+                        <span class="material-symbols-outlined text-6xl text-gray-300 mb-4">shopping_basket</span>
+                        <p class="text-gray-500 text-lg">ตะกร้าของคุณยังว่างอยู่</p>
+                        <a href="products.html" class="text-black font-bold underline mt-2 inline-block">ไปเลือกซื้อสินค้า</a>
+                    </div>`;
+                return;
+            }
+
+            let total = 0;
+            container.innerHTML = cart.map(item => {
+                total += item.price * item.quantity;
+                return `
+                    <div class="flex items-center gap-6 bg-white p-6 rounded-2xl border shadow-sm animate-fade-in">
+                        <img src="${item.image}" class="w-24 h-24 object-contain bg-gray-50 rounded-xl p-2 mix-blend-multiply">
+                        <div class="flex-1">
+                            <h3 class="font-bold text-lg mb-1">${item.name}</h3>
+                            <p class="text-sm text-gray-500 mb-2 uppercase">${item.category}</p>
+                            <div class="font-black text-lg">${App.ui.formatMoney(item.price)} <span class="text-gray-400 text-sm font-normal">x ${item.quantity}</span></div>
+                        </div>
+                        <div class="text-right">
+                            <div class="font-black text-xl mb-2">${App.ui.formatMoney(item.price * item.quantity)}</div>
+                            <button onclick="App.cart.remove(${item.id})" class="text-red-500 hover:text-red-700 text-sm font-bold flex items-center gap-1 justify-end"><span class="material-symbols-outlined text-base">delete</span> ลบ</button>
+                        </div>
+                    </div>
+                `;
+            }).join('');
+
+            document.getElementById('subtotal').innerText = App.ui.formatMoney(total);
+            document.getElementById('total').innerText = App.ui.formatMoney(total);
+        });
+
+        function checkout() {
+            const user = App.db.user();
+            if(!user) return alert('กรุณาเข้าสู่ระบบก่อนสั่งซื้อ');
+            
+            const cart = App.db.cart();
+            if(cart.length === 0) return alert('ไม่มีสินค้าในตะกร้า');
+
+            const address = document.getElementById('address').value;
+            if(!address) return alert('กรุณากรอกที่อยู่จัดส่ง');
+
+            if(confirm('ยืนยันคำสั่งซื้อ?')) {
+                const order = App.order.create(address);
+                alert(`สั่งซื้อสำเร็จ! เลขที่ใบสั่งซื้อ: ${order.id}`);
+                window.location.href = 'history.html';
+            }
+        }
+    </script>
+</body>
+</html>

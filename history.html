@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ประวัติการสั่งซื้อ - BlackOps BB</title>
+    <link href="https://fonts.googleapis.com/css2?family=Work+Sans:wght@300;400;600;800&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined" rel="stylesheet">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="assets/js/tailwind-config.js"></script>
+    <link rel="stylesheet" href="assets/css/style.css">
+</head>
+<body class="bg-gray-50 text-gray-900 font-display">
+
+    <div class="max-w-4xl mx-auto px-4 py-12">
+        <div class="flex justify-between items-center mb-8">
+            <h1 class="text-3xl font-black uppercase">ประวัติการสั่งซื้อ</h1>
+            <a href="index.html" class="text-sm font-bold underline">กลับหน้าหลัก</a>
+        </div>
+
+        <div id="order-list" class="space-y-6"></div>
+    </div>
+
+    <script src="assets/js/data.js"></script>
+    <script src="assets/js/main.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const user = App.db.user();
+            if(!user) {
+                alert('กรุณาเข้าสู่ระบบ');
+                window.location.href = 'login.html';
+                return;
+            }
+
+            const orders = App.db.orders().filter(o => o.user === user.username).reverse();
+            const container = document.getElementById('order-list');
+
+            if(orders.length === 0) {
+                container.innerHTML = `<div class="text-center py-20 text-gray-400">คุณยังไม่มีประวัติการสั่งซื้อ</div>`;
+                return;
+            }
+
+            container.innerHTML = orders.map(order => `
+                <div class="bg-white rounded-2xl border shadow-sm overflow-hidden animate-fade-in">
+                    <div class="bg-gray-50 px-6 py-4 border-b flex justify-between items-center">
+                        <div>
+                            <span class="font-bold text-lg mr-2">${order.id}</span>
+                            <span class="text-xs text-gray-500">${order.date}</span>
+                        </div>
+                        <span class="px-3 py-1 rounded-full text-xs font-bold uppercase tracking-wider ${
+                            order.status === 'สำเร็จ' ? 'bg-green-100 text-green-700' : 
+                            order.status === 'ยกเลิก' ? 'bg-red-100 text-red-700' : 'bg-yellow-100 text-yellow-700'
+                        }">${order.status}</span>
+                    </div>
+                    <div class="p-6">
+                        <div class="space-y-4 mb-4">
+                            ${order.items.map(item => `
+                                <div class="flex justify-between items-center">
+                                    <div class="flex items-center gap-4">
+                                        <img src="${item.image}" class="w-12 h-12 rounded bg-gray-100 object-contain p-1">
+                                        <div>
+                                            <p class="font-bold text-sm">${item.name}</p>
+                                            <p class="text-xs text-gray-500">x${item.quantity}</p>
+                                        </div>
+                                    </div>
+                                    <p class="font-bold">${App.ui.formatMoney(item.price * item.quantity)}</p>
+                                </div>
+                            `).join('')}
+                        </div>
+                        <div class="bg-gray-50 p-4 rounded-lg text-sm text-gray-600 mb-4">
+                            <span class="font-bold text-gray-400 text-xs uppercase block mb-1">ที่อยู่จัดส่ง</span>
+                            ${order.info}
+                        </div>
+                        <div class="border-t pt-4 flex justify-between items-center">
+                            <span class="text-gray-500 text-sm">ยอดรวมทั้งสิ้น</span>
+                            <span class="font-black text-xl text-red-600">${App.ui.formatMoney(order.total)}</span>
+                        </div>
+                    </div>
+                </div>
+            `).join('');
+        });
+    </script>
+</body>
+</html>
