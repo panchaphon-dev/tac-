@@ -24,6 +24,33 @@
             display: inline-block;
             margin-top: 10px;
         }
+        /* Search Bar Style */
+        .search-container {
+            max-width: 500px;
+            margin: 0 auto 20px auto;
+            position: relative;
+        }
+        .search-input {
+            background: rgba(20,20,20,0.8);
+            border: 1px solid var(--gold);
+            color: white;
+            border-radius: 50px;
+            padding: 10px 20px 10px 45px;
+            width: 100%;
+            transition: 0.3s;
+        }
+        .search-input:focus {
+            box-shadow: 0 0 15px rgba(255, 193, 7, 0.3);
+            outline: none;
+            background: rgba(0,0,0,0.9);
+        }
+        .search-icon {
+            position: absolute;
+            left: 15px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: var(--gold);
+        }
     </style>
 </head>
 <body onload="initSystem()">
@@ -40,9 +67,7 @@
             </button>
             <div class="collapse navbar-collapse" id="mainNav">
                 <ul class="navbar-nav ms-auto align-items-center gap-3" id="navAuth">
-                    <li class="nav-item"><a class="nav-link" href="index.html">HOME</a></li>
-                    <li class="nav-item"><a class="nav-link active text-gold" href="Gallery.html">ARMORY</a></li>
-                    <li class="nav-item"><a class="nav-link" href="ABOUT.html">ABOUT</a></li>
+                    <!-- Dynamic Menu -->
                 </ul>
             </div>
         </div>
@@ -54,13 +79,21 @@
         <p class="text-gold font-tech fs-5">EQUIP YOURSELF FOR THE MISSION</p>
     </header>
 
-    <!-- FILTERS -->
-    <div class="container mb-4 text-center">
-        <div class="btn-group" role="group">
-            <button type="button" class="btn btn-outline-warning active" onclick="filterShop('ALL', this)">ALL</button>
-            <button type="button" class="btn btn-outline-warning" onclick="filterShop('WEAPONS', this)">WEAPONS</button>
-            <button type="button" class="btn btn-outline-warning" onclick="filterShop('ARMOR', this)">ARMOR</button>
-            <button type="button" class="btn btn-outline-warning" onclick="filterShop('GEAR', this)">GEAR</button>
+    <!-- FILTERS & SEARCH -->
+    <div class="container mb-4">
+        <!-- Search Bar (New) -->
+        <div class="search-container">
+            <i class="fas fa-search search-icon"></i>
+            <input type="text" id="searchInput" class="search-input" placeholder="SEARCH EQUIPMENT..." onkeyup="searchProducts()">
+        </div>
+
+        <div class="text-center">
+            <div class="btn-group" role="group">
+                <button type="button" class="btn btn-outline-warning active" onclick="filterShop('ALL', this)">ALL</button>
+                <button type="button" class="btn btn-outline-warning" onclick="filterShop('WEAPONS', this)">WEAPONS</button>
+                <button type="button" class="btn btn-outline-warning" onclick="filterShop('ARMOR', this)">ARMOR</button>
+                <button type="button" class="btn btn-outline-warning" onclick="filterShop('GEAR', this)">GEAR</button>
+            </div>
         </div>
     </div>
 
@@ -69,6 +102,7 @@
         <div class="row g-4" id="galleryGrid"></div>
     </div>
 
+    <!-- MODAL และ CART (คงเดิม) -->
     <!-- PRODUCT DETAILS MODAL -->
     <div class="modal fade" id="productModal" tabindex="-1">
         <div class="modal-dialog modal-lg modal-dialog-centered modal-dialog-scrollable">
@@ -87,6 +121,7 @@
                             <div class="mb-2">
                                 <span class="badge bg-warning text-dark" id="modalCat">CATEGORY</span>
                                 <span class="badge bg-secondary text-white ms-1" id="modalId">ID</span>
+                                <span class="badge bg-success ms-1"><i class="fas fa-check-circle me-1"></i>READY TO SHIP</span>
                             </div>
                             <h2 class="text-gold font-monospace mb-3" id="modalPrice">฿0</h2>
                             <div class="bg-black bg-opacity-50 p-3 rounded border border-secondary mb-3">
@@ -223,18 +258,23 @@
             }
         }
 
-        // --- CORE SYSTEM ---
+        // --- CORE SYSTEM (แก้ใหม่: โหลดจาก LocalStorage ก่อนเสมอ) ---
         function initSystem() {
-            checkAuth();
+            checkAuth(); // จาก data.js
 
-            if (typeof SYSTEM_DATA !== 'undefined' && SYSTEM_DATA.length > 0) {
-                // แก้ไข: ใช้ข้อมูลจาก SYSTEM_DATA เท่านั้น ไม่มีการ Merge
-                allProducts = SYSTEM_DATA; 
+            // 1. ลองโหลดจาก LocalStorage ก่อน (ข้อมูลล่าสุดจาก Admin)
+            const storedProducts = localStorage.getItem('tactical_products');
+            
+            if (storedProducts) {
+                allProducts = JSON.parse(storedProducts);
+            } else if (typeof SYSTEM_DATA !== 'undefined') {
+                // 2. ถ้าไม่มีใน Storage (ครั้งแรก) ถึงจะโหลดจาก data.js
+                allProducts = SYSTEM_DATA;
                 localStorage.setItem('tactical_products', JSON.stringify(allProducts));
-            } else {
-                allProducts = JSON.parse(localStorage.getItem('tactical_products')) || [];
             }
+
             renderShop('ALL');
+
             const savedCart = sessionStorage.getItem('tactical_cart');
             if (savedCart) {
                 cart = JSON.parse(savedCart);
@@ -242,17 +282,36 @@
             }
         }
 
+        // --- SEARCH SYSTEM ---
+        function searchProducts() {
+            const txt = document.getElementById('searchInput').value.toLowerCase();
+            const grid = document.getElementById('galleryGrid');
+            
+            const filtered = allProducts.filter(p => p.name.toLowerCase().includes(txt));
+            
+            if(filtered.length === 0) {
+                grid.innerHTML = '<div class="col-12 text-center text-muted py-5"><h4>NO INTEL FOUND</h4></div>';
+            } else {
+                renderGridHTML(filtered);
+            }
+        }
+
         // --- RENDER SHOP ---
         function renderShop(filter) {
-            const grid = document.getElementById('galleryGrid');
-            if (!grid) return;
             let filtered = allProducts;
             if (filter !== 'ALL') filtered = allProducts.filter(p => p.category === filter);
-            if(filtered.length === 0) {
+            renderGridHTML(filtered);
+        }
+
+        function renderGridHTML(products) {
+            const grid = document.getElementById('galleryGrid');
+            if (!grid) return;
+
+            if(products.length === 0) {
                 grid.innerHTML = '<div class="col-12 text-center text-muted py-5"><h4>NO INTEL FOUND</h4></div>';
                 return;
             }
-            grid.innerHTML = filtered.map(p => `
+            grid.innerHTML = products.map(p => `
                 <div class="col-md-6 col-lg-4 animate-item">
                     <div class="card tactical-card h-100 text-white">
                         <div class="position-relative overflow-hidden group-hover-zoom">
@@ -272,6 +331,7 @@
                     </div>
                 </div>`).join('');
         }
+
         function filterShop(cat, btn) {
             document.querySelectorAll('.btn-group .btn').forEach(b => b.classList.remove('active'));
             btn.classList.add('active');
@@ -305,12 +365,12 @@
         function addToCartFromModal() {
             if (currentModalProductId) {
                 addToCart(currentModalProductId, currentModalQty);
-                Swal.fire({ toast: true, position: 'top-end', icon: 'success', title: `ADDED ${currentModalQty} UNITS`, showConfirmButton: false, timer: 1500, background:'#000', color:'#fbbf24' });
+                Swal.fire({ toast: true, position: 'top-end', icon: 'success', title: `ADDED ${currentModalQty} UNITS`, showConfirmButton: false, timer: 1500, background:'#1c1c1c', color:'#fbbf24' });
             }
         }
         function quickAdd(id) {
             addToCart(id, 1);
-            Swal.fire({ toast: true, position: 'top-end', icon: 'success', title: 'ADDED TO LOADOUT', showConfirmButton: false, timer: 1500, background:'#000', color:'#fbbf24' });
+            Swal.fire({ toast: true, position: 'top-end', icon: 'success', title: 'ADDED TO LOADOUT', showConfirmButton: false, timer: 1500, background:'#1c1c1c', color:'#fbbf24' });
         }
 
         // --- COMMENTS ---
@@ -373,7 +433,7 @@
                  return Swal.fire({
                     icon: 'warning', title: 'ACCESS DENIED', 
                     text: 'Please LOGIN to verify your identity before requisition.',
-                    background: '#000', color: '#fff',
+                    background: '#1c1c1c', color: '#fff',
                     showCancelButton: true, confirmButtonText: 'LOGIN NOW', confirmButtonColor: '#fbbf24'
                 }).then((res) => {
                     if(res.isConfirmed) window.location.href = 'login.html';
@@ -408,7 +468,7 @@
             const payment = document.querySelector('input[name="paymentMethod"]:checked').value;
 
             if (!name || !phone || !addr) {
-                return Swal.fire({ icon: 'error', title: 'MISSING INTEL', text: 'Please fill in all shipping details.', background: '#000', color: '#fff' });
+                return Swal.fire({ icon: 'error', title: 'MISSING INTEL', text: 'Please fill in all shipping details.', background: '#1c1c1c', color: '#fff' });
             }
 
             Swal.fire({
@@ -417,7 +477,7 @@
                 icon: 'warning',
                 showCancelButton: true,
                 confirmButtonColor: '#fbbf24',
-                background: '#000', color: '#fff'
+                background: '#1c1c1c', color: '#fff'
             }).then((result) => {
                 if (result.isConfirmed) {
                     const orders = JSON.parse(localStorage.getItem('tactical_orders')) || [];
@@ -443,7 +503,7 @@
                         icon: 'success', 
                         title: 'ORDER DISPATCHED', 
                         html: `Order <b>#${newOrder.id}</b> confirmed.<br>We will ship to: ${addr}`,
-                        background: '#000', color: '#fbbf24'
+                        background: '#1c1c1c', color: '#fbbf24'
                     });
                 }
             });

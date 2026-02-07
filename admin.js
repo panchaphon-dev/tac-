@@ -14,11 +14,18 @@ function initAdmin() {
         return;
     }
 
-    // 2. HARD RESET SYSTEM DATA (แก้ใหม่: บังคับทับข้อมูลเก่าทิ้งทั้งหมด)
-    if (typeof SYSTEM_DATA !== 'undefined' && SYSTEM_DATA.length > 0) {
-        console.log("HARD RESET: Overwriting all product data with SYSTEM_DATA");
-        // บันทึกข้อมูล 15 ชิ้นทับลงไปเลย ไม่สนข้อมูลเก่า
-        saveData(KEYS.PRODUCTS, SYSTEM_DATA); 
+    // 2. SMART DATA LOADER (แก้ใหม่: โหลดของเดิมก่อน ถ้าไม่มีค่อยดึงจาก Code)
+    const storedProducts = localStorage.getItem(KEYS.PRODUCTS);
+    
+    if (!storedProducts) {
+        // ถ้าไม่มีข้อมูลเลย ให้โหลดจาก data.js
+        if (typeof SYSTEM_DATA !== 'undefined') {
+            console.log("Initializing System Data...");
+            saveData(KEYS.PRODUCTS, SYSTEM_DATA);
+        }
+    } else {
+        // ถ้ามีข้อมูลอยู่แล้ว ให้ใช้ข้อมูลเดิม (ที่แอดมินอาจจะแก้ไปแล้ว)
+        console.log("Loaded existing database.");
     }
 
     // 3. Load Dashboard Data
@@ -40,17 +47,24 @@ function switchTab(tabId, btn) {
     btn.classList.add('active');
 }
 
-// ฟังก์ชัน Sync (กดปุ่มนี้ก็จะบังคับล้างเหมือนกัน)
+// ฟังก์ชันล้างข้อมูลกลับไปเป็นค่าเริ่มต้น (จาก data.js)
 function resetSystemData() {
-    if (typeof SYSTEM_DATA !== 'undefined') {
-        saveData(KEYS.PRODUCTS, SYSTEM_DATA);
-        Swal.fire({
-            title: 'SYSTEM RESET',
-            text: 'ล้างข้อมูลสินค้าทั้งหมดกลับเป็นค่าเริ่มต้น 15 ชิ้นเรียบร้อย',
-            icon: 'success',
-            background: '#111', color: '#fff'
-        }).then(() => location.reload());
-    }
+    Swal.fire({
+        title: 'FACTORY RESET?',
+        text: "ข้อมูลสินค้าที่แก้ไขจะหายไปทั้งหมด และกลับไปเป็นค่าเริ่มต้น 15 ชิ้น",
+        icon: 'warning',
+        showCancelButton: true,
+        confirmButtonColor: '#dc3545',
+        confirmButtonText: 'YES, RESET',
+        background: '#1c1c1c', color: '#fff'
+    }).then((result) => {
+        if (result.isConfirmed) {
+            if (typeof SYSTEM_DATA !== 'undefined') {
+                saveData(KEYS.PRODUCTS, SYSTEM_DATA);
+                location.reload();
+            }
+        }
+    });
 }
 
 // --- DATA HELPERS ---
@@ -84,8 +98,8 @@ function renderChart(orders) {
             datasets: [{
                 label: 'Orders',
                 data: dataPoints,
-                borderColor: '#fbbf24',
-                backgroundColor: 'rgba(251, 191, 36, 0.1)',
+                borderColor: '#ffc107',
+                backgroundColor: 'rgba(255, 193, 7, 0.1)',
                 tension: 0.4,
                 fill: true
             }]
@@ -112,6 +126,7 @@ function renderProducts() {
             <td class="text-gold font-monospace">${p.price.toLocaleString()}</td>
             <td>
                 <button class="btn btn-sm btn-outline-warning" onclick="editProduct('${p.id}')"><i class="fas fa-edit"></i></button>
+                <button class="btn btn-sm btn-outline-danger ms-1" onclick="deleteProduct('${p.id}')"><i class="fas fa-trash"></i></button>
             </td>
         </tr>
     `).join('');
@@ -121,6 +136,7 @@ function openProductModal() {
     document.getElementById('modalTitle').innerText = 'ADD NEW ITEM';
     document.getElementById('pId').value = '';
     document.getElementById('pName').value = '';
+    document.getElementById('pCat').value = 'WEAPONS';
     document.getElementById('pPrice').value = '';
     document.getElementById('pImg').value = '';
     document.getElementById('pImgFile').value = '';
@@ -147,6 +163,7 @@ function saveProduct() {
     const name = document.getElementById('pName').value;
     const cat = document.getElementById('pCat').value;
     const price = Number(document.getElementById('pPrice').value);
+    
     const urlInput = document.getElementById('pImg');
     const fileInput = document.getElementById('pImgFile');
 
@@ -154,21 +171,48 @@ function saveProduct() {
 
     const commitSave = (finalImage) => {
         let products = getData(KEYS.PRODUCTS);
+        
         if (id) {
+            // EDIT EXISTING
             const idx = products.findIndex(x => x.id === id);
             if (idx !== -1) {
-                products[idx] = { ...products[idx], name, category: cat, price, image: finalImage || products[idx].image };
+                products[idx] = { 
+                    ...products[idx], 
+                    name, 
+                    category: cat, 
+                    price, 
+                    image: finalImage || products[idx].image 
+                };
             }
         } else {
-            const newId = 'P' + Date.now().toString().slice(-4);
+            // ADD NEW
+            const newId = 'P' + Date.now().toString().slice(-5);
             const fallbackImg = 'https://via.placeholder.com/400x400?text=TACTICAL';
-            products.push({ id: newId, name, category: cat, price, image: finalImage || fallbackImg });
+            products.push({ 
+                id: newId, 
+                name, 
+                category: cat, 
+                price, 
+                image: finalImage || fallbackImg 
+            });
         }
+        
         saveData(KEYS.PRODUCTS, products);
         renderProducts();
         renderDashboard();
+        
         bootstrap.Modal.getInstance(document.getElementById('productModal')).hide();
-        Swal.fire({ icon: 'success', title: 'SAVED', toast: true, position: 'top-end', timer: 1500, background: '#111', color: '#fbbf24' });
+        
+        Swal.fire({ 
+            icon: 'success', 
+            title: 'DATABASE UPDATED', 
+            text: 'หน้าร้านค้าจะแสดงข้อมูลใหม่ทันที',
+            toast: true, 
+            position: 'top-end', 
+            timer: 2000, 
+            background: '#1c1c1c', 
+            color: '#ffc107' 
+        });
     };
 
     if (fileInput.files && fileInput.files[0]) {
@@ -178,6 +222,26 @@ function saveProduct() {
     } else {
         commitSave(urlInput.value);
     }
+}
+
+function deleteProduct(id) {
+    Swal.fire({
+        title: 'DELETE ITEM?',
+        text: "สินค้านี้จะถูกลบออกจากหน้าร้านทันที",
+        icon: 'warning',
+        showCancelButton: true,
+        confirmButtonColor: '#dc3545',
+        background: '#1c1c1c', color: '#fff',
+        confirmButtonText: 'YES, DELETE'
+    }).then((result) => {
+        if (result.isConfirmed) {
+            let products = getData(KEYS.PRODUCTS);
+            products = products.filter(x => x.id !== id);
+            saveData(KEYS.PRODUCTS, products);
+            renderProducts();
+            renderDashboard();
+        }
+    });
 }
 
 // --- ORDER MANAGEMENT ---
@@ -253,7 +317,7 @@ function updateOrderStatus(status) {
         renderOrders();
         bootstrap.Modal.getInstance(document.getElementById('orderModal')).hide();
         renderDashboard(); 
-        Swal.fire({icon:'success', title:'UPDATED', toast:true, position:'top', timer:1000, background:'#111', color:'#fff'});
+        Swal.fire({icon:'success', title:'UPDATED', toast:true, position:'top', timer:1000, background:'#1c1c1c', color:'#fff'});
     }
 }
 
