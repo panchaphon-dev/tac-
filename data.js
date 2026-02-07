@@ -40,6 +40,7 @@ function checkAuth() {
         nav.innerHTML = `
             <li class="nav-item"><a class="nav-link" href="index.html">HOME</a></li>
             <li class="nav-item"><a class="nav-link" href="Gallery.html">ARMORY</a></li>
+            <li class="nav-item"><a class="nav-link" href="ABOUT.html">about</a></li>
             <li class="nav-item dropdown">
                 <a class="nav-link dropdown-toggle text-gold fw-bold" href="#" role="button" data-bs-toggle="dropdown">
                     <i class="fas fa-user-circle me-1"></i> ${user.name || user.username}
