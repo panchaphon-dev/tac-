@@ -1,254 +1,322 @@
 <!DOCTYPE html>
-<html class="dark" lang="th">
+<html lang="th">
+
 <head>
-    <meta charset="utf-8" />
-    <meta content="width=device-width, initial-scale=1.0" name="viewport" />
-    <title>Admin Dashboard - BlackOps</title>
-    <link href="https://fonts.googleapis.com/css2?family=Work+Sans:wght@400;600;700&family=Noto+Sans+Thai:wght@300;400;600&display=swap" rel="stylesheet" />
-    <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined" rel="stylesheet" />
-    <script src="https://cdn.tailwindcss.com"></script>
-    <script src="assets/js/tailwind-config.js"></script>
-    <link rel="stylesheet" href="style.css">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ADMIN DASHBOARD | TACTICAL OPS</title>
+    <!-- Dependencies -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <link href="style.css" rel="stylesheet">
     <style>
-        .sidebar-link.active { background: rgba(220, 38, 38, 0.1); color: #dc2626; border-right: 3px solid #dc2626; }
+        /* Admin Specific Styles */
+        body {
+            overflow: hidden;
+            background: #000;
+        }
+
+        .sidebar {
+            width: 250px;
+            height: 100vh;
+            position: fixed;
+            background: #050505;
+            border-right: 1px solid #222;
+            z-index: 1000;
+            padding-top: 20px;
+        }
+
+        .main-content {
+            margin-left: 250px;
+            padding: 20px;
+            height: 100vh;
+            overflow-y: auto;
+            padding-bottom: 100px;
+        }
+
+        .nav-link {
+            color: #888;
+            padding: 15px 25px;
+            transition: 0.3s;
+            text-transform: uppercase;
+            font-family: 'Rajdhani', sans-serif;
+            font-weight: 600;
+            border-left: 3px solid transparent;
+        }
+
+        .nav-link:hover,
+        .nav-link.active {
+            color: #fff;
+            background: rgba(251, 191, 36, 0.1);
+            border-left-color: #fbbf24;
+        }
+
+        .stat-card {
+            background: #111;
+            border: 1px solid #333;
+            border-radius: 0;
+        }
+
+        /* Custom Scrollbar */
+        ::-webkit-scrollbar {
+            width: 8px;
+        }
+
+        ::-webkit-scrollbar-track {
+            background: #000;
+        }
+
+        ::-webkit-scrollbar-thumb {
+            background: #333;
+        }
+
+        ::-webkit-scrollbar-thumb:hover {
+            background: #fbbf24;
+        }
     </style>
 </head>
-<body class="bg-[#0a0a0a] text-gray-300 font-body h-screen flex overflow-hidden">
 
-    <!-- Sidebar -->
-    <aside class="w-64 bg-[#111] border-r border-gray-800 flex flex-col">
-        <div class="p-6 border-b border-gray-800">
-            <h1 class="text-xl font-black text-white uppercase tracking-wider flex items-center gap-2">
-                <span class="material-symbols-outlined text-primary">admin_panel_settings</span> ADMIN
-            </h1>
+<body onload="initAdmin()">
+
+    <!-- SIDEBAR -->
+    <div class="sidebar">
+        <div class="text-center mb-5">
+            <h3 class="font-military text-gold mb-0">TACTICAL</h3>
+            <small class="text-muted font-tech">COMMAND CENTER</small>
         </div>
-        <nav class="flex-1 p-4 space-y-1 overflow-y-auto">
-            <button onclick="showTab('products')" id="nav-products" class="sidebar-link w-full flex items-center gap-3 px-4 py-3 text-sm font-bold rounded-lg hover:bg-white/5 transition active">
-                <span class="material-symbols-outlined">inventory_2</span> จัดการสินค้า
-            </button>
-            <button onclick="showTab('users')" id="nav-users" class="sidebar-link w-full flex items-center gap-3 px-4 py-3 text-sm font-bold rounded-lg hover:bg-white/5 transition">
-                <span class="material-symbols-outlined">group</span> รายชื่อสมาชิก
-            </button>
-            <button onclick="showTab('logs')" id="nav-logs" class="sidebar-link w-full flex items-center gap-3 px-4 py-3 text-sm font-bold rounded-lg hover:bg-white/5 transition">
-                <span class="material-symbols-outlined">history</span> ประวัติการเข้าใช้
-            </button>
-        </nav>
-        <div class="p-4 border-t border-gray-800">
-            <a href="index.html" class="flex items-center gap-2 text-xs text-gray-500 hover:text-white mb-4 justify-center">
-                <span class="material-symbols-outlined text-sm">storefront</span> ไปที่หน้าร้านค้า
+        <nav class="nav flex-column">
+            <a class="nav-link active" href="#" onclick="switchTab('dashboard', this)">
+                <i class="fas fa-chart-line me-2"></i> Dashboard
             </a>
-            <button id="logout-btn" class="w-full bg-red-600/10 text-red-500 hover:bg-red-600 hover:text-white py-2 rounded text-sm font-bold transition">ออกจากระบบ</button>
-        </div>
-    </aside>
-
-    <!-- Main Content -->
-    <main class="flex-1 flex flex-col relative overflow-hidden">
-        <!-- Header -->
-        <header class="h-16 border-b border-gray-800 flex items-center justify-between px-8 bg-[#0a0a0a]/90 backdrop-blur z-20">
-            <h2 id="page-title" class="text-lg font-bold text-white">จัดการสินค้า (Products)</h2>
-            <div class="flex items-center gap-3">
-                <div class="w-8 h-8 rounded-full bg-gray-800 flex items-center justify-center">
-                    <span class="material-symbols-outlined text-sm">person</span>
-                </div>
-                <span class="text-sm font-bold">Admin</span>
+            <a class="nav-link" href="#" onclick="switchTab('products', this)">
+                <i class="fas fa-box-open me-2"></i> Armory (Products)
+            </a>
+            <a class="nav-link" href="#" onclick="switchTab('orders', this)">
+                <i class="fas fa-clipboard-list me-2"></i> Missions (Orders)
+            </a>
+            <a class="nav-link" href="#" onclick="switchTab('users', this)">
+                <i class="fas fa-users me-2"></i> Operatives (Users)
+      
+            <!-- ปุ่ม RESET DATA -->
+            <div class="mt-5 px-3">
+                 <button class="btn btn-outline-danger w-100" onclick="resetSystemData()">
+                    <i class="fas fa-sync me-2"></i> SYNC FROM CODE
+                </button>
+                <small class="text-muted d-block text-center mt-2" style="font-size: 10px;">(กดเมื่อแก้โค้ด data.js แล้วไม่ขึ้น)</small>
             </div>
-        </header>
-
-        <!-- Content Area -->
-        <div class="flex-1 overflow-y-auto p-8 relative">
             
-            <!-- 1. Products Tab -->
-            <div id="tab-products" class="tab-pane animate-fade-in">
-                <div class="flex justify-end mb-6">
-                    <button onclick="openAddModal()" class="btn-primary flex items-center gap-2 shadow-lg">
-                        <span class="material-symbols-outlined">add</span> เพิ่มสินค้าใหม่
-                    </button>
+            <a class="nav-link text-danger mt-3" href="#" onclick="logout()">
+                <i class="fas fa-sign-out-alt me-2"></i> LOGOUT
+            </a>
+             </a>
+           <li class=""fas fa-users me-2><a class="nav-link" href="index.html">index</a></li>
+            </a>
+        </nav>
+    </div>
+
+    <!-- MAIN CONTENT -->
+    <div class="main-content">
+        
+        <!-- DASHBOARD SECTION -->
+        <div id="tab-dashboard" class="content-section">
+            <h2 class="font-military mb-4">MISSION STATUS</h2>
+            <div class="row g-4 mb-4">
+                <div class="col-md-3">
+                    <div class="p-4 stat-card text-center">
+                        <h1 class="text-gold display-4 fw-bold" id="totalSales">0</h1>
+                        <small class="text-muted">TOTAL REVENUE (THB)</small>
+                    </div>
                 </div>
-                <div class="glass-panel rounded-xl overflow-hidden">
-                    <table class="w-full text-left text-sm">
-                        <thead class="bg-black/40 text-gray-400 uppercase font-bold text-xs">
-                            <tr>
-                                <th class="p-4">รูปภาพ</th>
-                                <th class="p-4">ชื่อสินค้า</th>
-                                <th class="p-4">หมวดหมู่</th>
-                                <th class="p-4">ราคา</th>
-                                <th class="p-4 text-right">จัดการ</th>
-                            </tr>
-                        </thead>
-                        <tbody id="product-list" class="divide-y divide-gray-800">
-                            <!-- JS Inject -->
-                        </tbody>
-                    </table>
+                <div class="col-md-3">
+                    <div class="p-4 stat-card text-center">
+                        <h1 class="text-info display-4 fw-bold" id="totalOrders">0</h1>
+                        <small class="text-muted">TOTAL ORDERS</small>
+                    </div>
+                </div>
+                <div class="col-md-3">
+                    <div class="p-4 stat-card text-center">
+                        <h1 class="text-success display-4 fw-bold" id="totalProducts">0</h1>
+                        <small class="text-muted">ITEMS IN ARMORY</small>
+                    </div>
+                </div>
+                <div class="col-md-3">
+                    <div class="p-4 stat-card text-center">
+                        <h1 class="text-danger display-4 fw-bold" id="totalUsers">0</h1>
+                        <small class="text-muted">ACTIVE OPERATIVES</small>
+                    </div>
                 </div>
             </div>
-
-            <!-- 2. Users Tab -->
-            <div id="tab-users" class="tab-pane hidden animate-fade-in">
-                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6" id="user-grid">
-                    <!-- JS Inject -->
+            
+            <!-- Chart Container -->
+            <div class="row">
+                <div class="col-md-8">
+                    <div class="p-4 stat-card h-100">
+                        <h5 class="font-tech text-gold mb-3">SALES ANALYTICS</h5>
+                        <canvas id="salesChart"></canvas>
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="p-4 stat-card h-100">
+                        <h5 class="font-tech text-gold mb-3">RECENT ACTIVITY</h5>
+                        <div id="recentActivity" class="small text-muted"></div>
+                    </div>
                 </div>
             </div>
-
-            <!-- 3. Logs Tab -->
-            <div id="tab-logs" class="tab-pane hidden animate-fade-in">
-                <div class="glass-panel p-6 rounded-xl font-mono text-sm h-full max-h-[600px] overflow-y-auto">
-                    <h3 class="text-gray-400 mb-4 text-xs uppercase tracking-wider">System Access Logs</h3>
-                    <ul id="log-list" class="space-y-2">
-                        <!-- JS Inject -->
-                    </ul>
-                </div>
-            </div>
-
         </div>
-    </main>
 
-    <!-- Modal เพิ่มสินค้า -->
-    <div id="add-modal" class="fixed inset-0 bg-black/80 z-50 hidden flex items-center justify-center backdrop-blur-sm p-4">
-        <div class="glass-panel w-full max-w-lg p-8 rounded-xl shadow-2xl relative">
-            <button onclick="closeAddModal()" class="absolute top-4 right-4 text-gray-500 hover:text-white">
-                <span class="material-symbols-outlined">close</span>
-            </button>
-            <h3 class="text-xl font-bold text-white mb-6">เพิ่มสินค้าใหม่</h3>
-            <form id="add-product-form" class="space-y-4">
-                <div class="grid grid-cols-2 gap-4">
-                    <div>
-                        <label class="text-xs text-gray-400 uppercase font-bold">ชื่อสินค้า</label>
-                        <input type="text" id="p-name" class="input-dark mt-1" required>
+        <!-- PRODUCTS SECTION -->
+        <div id="tab-products" class="content-section d-none">
+            <div class="d-flex justify-content-between align-items-center mb-4">
+                <h2 class="font-military">ARMORY INVENTORY</h2>
+                <button class="btn btn-gold fw-bold" onclick="openProductModal()">
+                    <i class="fas fa-plus me-2"></i> ADD NEW ITEM
+                </button>
+            </div>
+            <div class="table-responsive stat-card p-3">
+                <table class="table table-dark table-hover align-middle">
+                    <thead>
+                        <tr class="text-gold font-tech">
+                            <th>IMG</th>
+                            <th>ITEM NAME</th>
+                            <th>CATEGORY</th>
+                            <th>PRICE</th>
+                            <th>ACTION</th>
+                        </tr>
+                    </thead>
+                    <tbody id="productTableBody"></tbody>
+                </table>
+            </div>
+        </div>
+
+        <!-- ORDERS SECTION -->
+        <div id="tab-orders" class="content-section d-none">
+            <h2 class="font-military mb-4">MISSION LOGS (ORDERS)</h2>
+            <div class="table-responsive stat-card p-3">
+                <table class="table table-dark table-hover align-middle">
+                    <thead>
+                        <tr class="text-gold font-tech">
+                            <th>ORDER ID</th>
+                            <th>OPERATIVE</th>
+                            <th>TOTAL</th>
+                            <th>PAYMENT</th>
+                            <th>STATUS</th>
+                            <th>ACTION</th>
+                        </tr>
+                    </thead>
+                    <tbody id="orderTableBody"></tbody>
+                </table>
+            </div>
+        </div>
+
+        <!-- USERS SECTION -->
+        <div id="tab-users" class="content-section d-none">
+            <h2 class="font-military mb-4">OPERATIVE ROSTER</h2>
+            <div class="table-responsive stat-card p-3">
+                <table class="table table-dark table-hover align-middle">
+                    <thead>
+                        <tr class="text-gold font-tech">
+                            <th>USERNAME</th>
+                            <th>FULL NAME</th>
+                            <th>CONTACT</th>
+                            <th>ADDRESS</th>
+                        </tr>
+                    </thead>
+                    <tbody id="userTableBody"></tbody>
+                </table>
+            </div>
+        </div>
+
+    </div>
+
+    <!-- MODAL: ADD/EDIT PRODUCT -->
+    <div class="modal fade" id="productModal" tabindex="-1">
+        <div class="modal-dialog">
+            <div class="modal-content bg-dark text-white border-secondary">
+                <div class="modal-header border-secondary">
+                    <h5 class="modal-title font-rajdhani fw-bold" id="modalTitle">ADD ITEM</h5>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <input type="hidden" id="pId">
+                    <div class="mb-3">
+                        <label class="form-label text-gold">ITEM NAME</label>
+                        <input type="text" class="form-control bg-black text-white border-secondary" id="pName">
                     </div>
-                    <div>
-                        <label class="text-xs text-gray-400 uppercase font-bold">ราคา</label>
-                        <input type="number" id="p-price" class="input-dark mt-1" required>
+                    <div class="mb-3">
+                        <label class="form-label text-gold">CATEGORY</label>
+                        <select class="form-select bg-black text-white border-secondary" id="pCat">
+                            <option value="WEAPONS">WEAPONS</option>
+                            <option value="ARMOR">ARMOR</option>
+                            <option value="GEAR">GEAR</option>
+                        </select>
                     </div>
+                    <div class="mb-3">
+                        <label class="form-label text-gold">PRICE (THB)</label>
+                        <input type="number" class="form-control bg-black text-white border-secondary" id="pPrice">
+                    </div>
+                    
+                    <!-- ส่วนอัปโหลดรูปภาพ -->
+                    <div class="mb-3">
+                        <label class="form-label text-gold">IMAGE SOURCE</label>
+                        <ul class="nav nav-tabs border-secondary mb-3" id="imgTab" role="tablist">
+                            <li class="nav-item">
+                                <button class="nav-link active text-white" data-bs-toggle="tab" data-bs-target="#tab-url" type="button">URL Link</button>
+                            </li>
+                            <li class="nav-item">
+                                <button class="nav-link text-white" data-bs-toggle="tab" data-bs-target="#tab-file" type="button">Upload File</button>
+                            </li>
+                        </ul>
+                        
+                        <div class="tab-content">
+                            <!-- Tab 1: URL -->
+                            <div class="tab-pane fade show active" id="tab-url">
+                                <input type="text" class="form-control bg-black text-white border-secondary" id="pImg" placeholder="https://example.com/image.jpg">
+                            </div>
+                            <!-- Tab 2: File Upload -->
+                            <div class="tab-pane fade" id="tab-file">
+                                <input type="file" class="form-control bg-black text-white border-secondary" id="pImgFile" accept="image/*">
+                                <small class="text-muted d-block mt-2">* รองรับไฟล์ภาพ (ระบบจะแปลงเป็น Code Base64)</small>
+                            </div>
+                        </div>
+                    </div>
+                    
                 </div>
-                <div>
-                    <label class="text-xs text-gray-400 uppercase font-bold">หมวดหมู่</label>
-                    <select id="p-cat" class="input-dark mt-1">
-                        <option value="rifle">Rifle (ปืนยาว)</option>
-                        <option value="pistol">Pistol (ปืนสั้น)</option>
-                        <option value="gear">Gear (อุปกรณ์)</option>
-                        <option value="sniper">Sniper (สไนเปอร์)</option>
-                    </select>
+                <div class="modal-footer border-secondary">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                    <button type="button" class="btn btn-primary fw-bold" onclick="saveProduct()">SAVE DATA</button>
                 </div>
-                <div>
-                    <label class="text-xs text-gray-400 uppercase font-bold">URL รูปภาพ</label>
-                    <input type="text" id="p-img" class="input-dark mt-1" placeholder="assets/images/..." required>
-                </div>
-                <div>
-                    <label class="text-xs text-gray-400 uppercase font-bold">รายละเอียด</label>
-                    <textarea id="p-desc" class="input-dark mt-1" rows="3"></textarea>
-                </div>
-                <button type="submit" class="btn-primary w-full mt-4">บันทึกข้อมูล</button>
-            </form>
+            </div>
         </div>
     </div>
 
-    <!-- Scripts -->
-    <script type="module">
-        import { getCurrentUser, logout, getAllUsers, getLoginLogs } from './assets/js/auth-utils.js';
-        import { getProductsDB, addProductDB, deleteProductDB } from './assets/js/products-utils.js';
-
-        // 1. Check Access
-        const user = getCurrentUser();
-        if (!user || user.role !== 'admin') {
-            alert('Access Denied');
-            window.location.href = 'admin-login.html';
-        }
-
-        // Logout
-        document.getElementById('logout-btn').addEventListener('click', () => {
-            if(confirm('ออกจากระบบ?')) logout();
-        });
-
-        // 2. Tab Switching
-        window.showTab = (tabId) => {
-            document.querySelectorAll('.tab-pane').forEach(el => el.classList.add('hidden'));
-            document.getElementById(`tab-${tabId}`).classList.remove('hidden');
-            
-            document.querySelectorAll('.sidebar-link').forEach(el => el.classList.remove('active'));
-            document.getElementById(`nav-${tabId}`).classList.add('active');
-
-            const titles = { products: 'จัดการสินค้า', users: 'รายชื่อสมาชิก', logs: 'ประวัติการเข้าใช้งาน' };
-            document.getElementById('page-title').innerText = titles[tabId];
-
-            if(tabId === 'products') renderProducts();
-            if(tabId === 'users') renderUsers();
-            if(tabId === 'logs') renderLogs();
-        }
-
-        // 3. Render Functions
-        function renderProducts() {
-            const products = getProductsDB();
-            document.getElementById('product-list').innerHTML = products.map(p => `
-                <tr class="hover:bg-white/5 transition border-b border-gray-800">
-                    <td class="p-4"><img src="${p.image}" class="w-12 h-12 object-contain bg-white rounded p-1"></td>
-                    <td class="p-4 font-bold text-white">${p.name}</td>
-                    <td class="p-4"><span class="px-2 py-1 bg-gray-800 rounded text-xs uppercase text-gray-400">${p.category}</span></td>
-                    <td class="p-4 text-primary font-mono">฿${p.price.toLocaleString()}</td>
-                    <td class="p-4 text-right">
-                        <button onclick="window.delProduct(${p.id})" class="text-red-500 hover:text-white hover:bg-red-600 p-2 rounded transition"><span class="material-symbols-outlined text-lg">delete</span></button>
-                    </td>
-                </tr>
-            `).join('');
-        }
-
-        function renderUsers() {
-            const users = getAllUsers();
-            document.getElementById('user-grid').innerHTML = users.map(u => `
-                <div class="glass-panel p-5 rounded-xl border border-gray-800 flex items-start gap-4">
-                    <div class="w-12 h-12 bg-gray-800 rounded-full flex items-center justify-center text-xl">👤</div>
-                    <div>
-                        <h4 class="font-bold text-white text-lg">${u.name}</h4>
-                        <p class="text-gray-500 text-sm">@${u.username}</p>
-                        <div class="mt-3 text-xs text-gray-400 space-y-1">
-                            <p>📞 ${u.phone}</p>
-                            <p>📧 ${u.email}</p>
-                            <p class="text-gray-600">สมัครเมื่อ: ${u.createdAt}</p>
-                        </div>
-                    </div>
+    <!-- MODAL: ORDER DETAILS -->
+    <div class="modal fade" id="orderModal" tabindex="-1">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content bg-dark text-white border-secondary">
+                <div class="modal-header border-secondary">
+                    <h5 class="modal-title font-rajdhani fw-bold">ORDER DETAILS</h5>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
                 </div>
-            `).join('');
-        }
+                <div class="modal-body">
+                    <div id="orderDetailContent"></div>
+                </div>
+                <div class="modal-footer border-secondary">
+                    <button class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                    <button class="btn btn-success fw-bold" onclick="updateOrderStatus('COMPLETED')">MARK AS
+                        COMPLETED</button>
+                </div>
+            </div>
+        </div>
+    </div>
 
-        function renderLogs() {
-            const logs = getLoginLogs();
-            document.getElementById('log-list').innerHTML = logs.map(l => `
-                <li class="flex gap-4 border-b border-gray-800 pb-2 mb-2">
-                    <span class="text-gray-500 w-36">[${l.timestamp}]</span>
-                    <span class="text-white font-bold w-32">${l.username}</span>
-                    <span class="${l.status === 'Success' ? 'text-green-500' : 'text-red-500'}">${l.status === 'Success' ? 'LOGIN SUCCESS' : 'LOGIN FAILED'}</span>
-                </li>
-            `).join('');
-        }
-
-        // 4. Action Functions (Add/Delete)
-        window.openAddModal = () => document.getElementById('add-modal').classList.remove('hidden');
-        window.closeAddModal = () => document.getElementById('add-modal').classList.add('hidden');
-
-        document.getElementById('add-product-form').addEventListener('submit', (e) => {
-            e.preventDefault();
-            const newProduct = {
-                name: document.getElementById('p-name').value,
-                price: Number(document.getElementById('p-price').value),
-                category: document.getElementById('p-cat').value,
-                image: document.getElementById('p-img').value,
-                desc: document.getElementById('p-desc').value
-            };
-            
-            addProductDB(newProduct);
-            closeAddModal();
-            e.target.reset();
-            renderProducts();
-            alert('เพิ่มสินค้าสำเร็จ!');
-        });
-
-        window.delProduct = (id) => {
-            if(confirm('ยืนยันการลบสินค้า?')) {
-                if(deleteProductDB(id)) renderProducts();
-            }
-        };
-
-        // Init
-        renderProducts();
-    </script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    
+    <!-- IMPORT DATA FILE HERE -->
+    <script src="data.js"></script> 
+    
+    <script src="admin.js"></script>
 </body>
+
 </html>

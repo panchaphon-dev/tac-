@@ -1,0 +1,358 @@
+<!DOCTYPE html>
+<html lang="th">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ABOUT US | TACTICAL OPS</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="style.css" rel="stylesheet">
+</head>
+<!DOCTYPE html>
+<html lang="th">
+<head>
+
+    <style>
+        .about-hero {
+            background: linear-gradient(to bottom, rgba(0,0,0,0.3), rgba(0,0,0,0.9)), url('https://images.unsplash.com/photo-1595590424283-b8f17842773f?auto=format&fit=crop&q=80&w=1920');
+            background-size: cover;
+            background-position: center;
+            height: 400px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+        }
+        .feature-icon {
+            width: 80px;
+            height: 80px;
+            background: rgba(255, 215, 0, 0.1);
+            border: 1px solid var(--gold);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 20px;
+            color: var(--gold);
+            font-size: 2rem;
+            transition: 0.3s;
+        }
+        .feature-box:hover .feature-icon {
+            background: var(--gold);
+            color: #000;
+            box-shadow: 0 0 20px rgba(255, 215, 0, 0.5);
+        }
+    </style>
+</head>
+<body onload="initSystem()"> 
+    <div class="bg-grid"></div>
+
+    <!-- NAVBAR -->
+    <nav class="navbar navbar-expand-lg navbar-tactical fixed-top">
+        <div class="container">
+            <a class="navbar-brand brand-font text-gold" href="index.html">
+                <i class="fas fa-shield-alt me-2"></i>TACTICAL<span class="text-white">OPS</span>
+            </a>
+            <button class="navbar-toggler btn-sm btn-outline-warning" type="button" data-bs-toggle="collapse" data-bs-target="#mainNav">
+                <i class="fas fa-bars"></i>
+            </button>
+            <div class="collapse navbar-collapse" id="mainNav">
+                <ul class="navbar-nav ms-auto align-items-center gap-3" id="navAuth">
+                    <li class="nav-item"><a class="nav-link" href="index.html">HOME</a></li>
+                    <li class="nav-item"><a class="nav-link" href="Gallery.html">ARMORY</a></li>
+                    <li class="nav-item"><a class="nav-link active text-gold" href="ABOUT.html">ABOUT</a></li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <!-- HERO HEADER -->
+    <header class="about-hero mb-5">
+        <div class="container">
+            <h1 class="display-3 font-military text-gold text-shadow mb-3">WHO WE ARE</h1>
+            <p class="lead text-white font-tech spacing-2">THE ELITE CHOICE FOR TACTICAL GEAR</p>
+        </div>
+    </header>
+
+    <!-- STORY SECTION -->
+    <section class="container mb-5">
+        <div class="row align-items-center">
+            <div class="col-md-6 mb-4">
+                <img src="https://images.unsplash.com/photo-1623910385628-97cb244c0292?auto=format&fit=crop&w=800&q=80" class="img-fluid rounded border border-secondary shadow-lg">
+            </div>
+            <div class="col-md-6">
+                <h2 class="font-military text-white mb-4">OUR MISSION</h2>
+                <div class="tactical-card p-4">
+                    <p class="text-muted">
+                        <span class="text-gold fw-bold">TACTICAL OPS</span> ก่อตั้งขึ้นในปี 2023 โดยกลุ่มผู้เชี่ยวชาญด้านยุทธวิธีที่มีความหลงใหลในอุปกรณ์ทางทหาร เราเริ่มต้นจากการเป็นร้านเล็กๆ ที่คัดสรรเฉพาะอุปกรณ์ที่ "ใช้งานได้จริง" ในสนามรบ จนเติบโตเป็นศูนย์รวมยุทโธปกรณ์ระดับ Premium
+                    </p>
+                    <p class="text-muted">
+                        เป้าหมายของเราคือการส่งมอบอุปกรณ์ที่มีคุณภาพสูงสุด มาตรฐานกองทัพ (Mil-Spec) ให้กับเจ้าหน้าที่ปฏิบัติการ นักกีฬายิงปืน และผู้ที่ชื่นชอบ Tactical Gear ทุกท่าน เพื่อความมั่นใจในทุกภารกิจ
+                    </p>
+                    <div class="mt-4">
+                        <div class="d-flex align-items-center mb-3">
+                            <i class="fas fa-check-circle text-gold me-3"></i>
+                            <span>สินค้าลิขสิทธิ์แท้ 100% (Authentic Gear)</span>
+                        </div>
+                        <div class="d-flex align-items-center mb-3">
+                            <i class="fas fa-check-circle text-gold me-3"></i>
+                            <span>รับประกันคุณภาพทุกชิ้น (Quality Assurance)</span>
+                        </div>
+                        <div class="d-flex align-items-center">
+                            <i class="fas fa-check-circle text-gold me-3"></i>
+                            <span>บริการหลังการขายโดยผู้เชี่ยวชาญ (Expert Support)</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    
+
+    <!-- CONTACT & LOCATION -->
+    <section class="container mb-5">
+        <div class="row">
+            <div class="col-md-6 mb-4">
+                <div class="tactical-card h-100 p-4">
+                    <h3 class="font-military text-gold mb-4">HQ LOCATION</h3>
+                    <!-- Mockup Map -->
+                    <div class="ratio ratio-16x9 mb-3 border border-secondary rounded">
+                        <iframe src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3875.617267077884!2d100.50176531483036!3d13.741565990353957!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x0%3A0x0!2zMTPCsDQ0JzI5LjYiTiAxMDDCsDMwJzE0LjMiRQ!5e0!3m2!1sen!2sth!4v1625561234567!5m2!1sen!2sth" allowfullscreen="" loading="lazy"></iframe>
+                    </div>
+                    <p class="text-white mb-1"><i class="fas fa-map-marker-alt text-gold me-2"></i> 123 Tactical Road, Bangkok, Thailand</p>
+                    <p class="text-white"><i class="fas fa-clock text-gold me-2"></i> Open Daily: 10:00 - 20:00</p>
+                </div>
+            </div>
+            <div class="col-md-6 mb-4">
+                <div class="tactical-card h-100 p-4">
+                    <h3 class="font-military text-gold mb-4">CONTACT INTEL</h3>
+                    <form>
+                        <div class="mb-3">
+                            <label class="form-label text-muted small">YOUR NAME</label>
+                            <input type="text" class="form-control" placeholder="Operative Name">
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label text-muted small">EMAIL / CONTACT</label>
+                            <input type="text" class="form-control" placeholder="Contact Info">
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label text-muted small">MESSAGE</label>
+                            <textarea class="form-control" rows="4" placeholder="Requesting intel..."></textarea>
+                        </div>
+                        <button class="btn btn-gold w-100 fw-bold">SEND TRANSMISSION</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- FOOTER -->
+    
+
+    <!-- Cart Offcanvas (เชื่อมต่อระบบตะกร้าให้เหมือนหน้าอื่น) -->
+    <div class="offcanvas offcanvas-end text-white" tabindex="-1" id="cartOffcanvas" style="background: #111;">
+        <div class="offcanvas-header border-bottom border-secondary">
+            <h5 class="offcanvas-title font-tech text-gold">CURRENT LOADOUT</h5>
+            <button type="button" class="btn-close btn-close-white" data-bs-dismiss="offcanvas"></button>
+        </div>
+        <div class="offcanvas-body">
+            <div id="cartItems" class="mb-3"></div>
+            <div class="border-top border-secondary pt-3">
+                <div class="d-flex justify-content-between mb-3">
+                    <span>TOTAL</span>
+                    <span class="text-gold fw-bold" id="cartTotal">฿0</span>
+                </div>
+                <button onclick="window.location.href='Gallery.html'" class="btn btn-gold w-100 fw-bold">GO TO CHECKOUT</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Floating Cart Button -->
+    <button class="btn btn-gold rounded-circle shadow-lg position-fixed bottom-0 end-0 m-4 p-3 z-3" style="width: 60px; height: 60px;" data-bs-toggle="offcanvas" data-bs-target="#cartOffcanvas">
+        <i class="fas fa-shopping-cart fa-lg"></i>
+        <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger border border-dark" id="cartBadgeFloat">0</span>
+    </button>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="data.js"></script>
+    <script>
+        // Script ย่อสำหรับจัดการตะกร้าในหน้า About
+        let cart = [];
+        
+        // Override initSystem ใน data.js บางส่วนเพื่อโหลดเฉพาะที่จำเป็น
+        const originalInit = window.initSystem;
+        window.initSystem = function() {
+            checkAuth(); // จาก data.js
+            
+            // Load Cart
+            const savedCart = sessionStorage.getItem('tactical_cart');
+            if (savedCart) {
+                cart = JSON.parse(savedCart);
+                updateCartUI();
+            }
+        }
+
+        function updateCartUI() {
+            const badge = document.getElementById('cartBadgeFloat');
+            const list = document.getElementById('cartItems');
+            const totalEl = document.getElementById('cartTotal');
+            
+            const totalQty = cart.reduce((sum, i) => sum + i.quantity, 0);
+            const totalCost = cart.reduce((sum, i) => sum + (i.price * i.quantity), 0);
+
+            if(badge) {
+                badge.innerText = totalQty;
+                badge.style.display = totalQty > 0 ? 'block' : 'none';
+            }
+            if(totalEl) totalEl.innerText = '฿' + totalCost.toLocaleString();
+
+            if (cart.length === 0) {
+                list.innerHTML = '<div class="text-center text-muted py-4"><i class="fas fa-box-open fa-2x mb-2"></i><br>EMPTY LOADOUT</div>';
+            } else {
+                list.innerHTML = cart.map(item => `
+                    <div class="d-flex justify-content-between align-items-center mb-3 border-bottom border-secondary pb-2">
+                        <div class="d-flex align-items-center">
+                            <img src="${item.image}" style="width: 50px; height: 50px; object-fit: cover;" class="rounded border border-secondary me-2">
+                            <div>
+                                <div class="font-tech small text-white text-truncate" style="max-width: 150px;">${item.name}</div>
+                                <div class="text-muted small">x${item.quantity} @ ฿${item.price}</div>
+                            </div>
+                        </div>
+                    </div>
+                `).join('');
+            }
+        }
+    </script>
+</body>
+</html>
+
+<body onload="initSystem()">
+
+    <!-- Navbar -->
+    <nav class="navbar navbar-expand-lg navbar-elite fixed-top">
+        <div class="container">
+            <a class="navbar-brand" href="index.html">
+                <i class="fas fa-crosshairs text-gold me-2"></i>TACTICAL<span>OPS</span>
+            </a>
+            <button class="navbar-toggler btn-sm btn-outline-light border-0" type="button" data-bs-toggle="collapse"
+                data-bs-target="#mainNav">
+                <i class="fas fa-bars"></i>
+            </button>
+            <div class="collapse navbar-collapse" id="mainNav">
+                <ul class="navbar-nav ms-auto align-items-center gap-3" id="navAuth"></ul>
+                <button class="btn btn-outline-gold position-relative ms-3 border-0" onclick="toggleCart()">
+                    <i class="fas fa-shopping-bag fa-lg"></i>
+                    <span id="cartCount"
+                        class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger">0</span>
+                </button>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Content -->
+    <div class="container py-5">
+        <div class="text-center mb-5">
+            <h1 class="text-white display-5 fw-bold font-tech">ABOUT CREATORS</h1>
+            <div class="divider"></div>
+            <p class="text-muted">ผู้จัดทำและทีมงานพัฒนาระบบ</p>
+        </div>
+
+        <div class="container" style="margin-top: 100px;">
+            <h1 class="text-center text-white font-cyber mb-5 title-glow">DEVELOPER TEAM</h1>
+            <div class="row g-4 justify-content-center">
+                <div class="col-md-4">
+                    <div style="text-align:center;">
+                        <img src="เต้.jpg"
+                            style="width:200px; height:200px; object-fit:cover; border-radius:50%; border:3px solid var(--gold); margin-bottom:20px;"
+                            onerror="this.src='https://via.placeholder.com/200?text=Creator'">
+                        <h3 style="color:var(--gold);">นายภูธเนศ เรดสันเทียะ ห้องที่9 เลขที่14</h3>
+                        <p style="color:#666;">ID: 68319090014</p>
+                        <p>สาขา เทคโนโลยีคอมพิวเตอร์</p>
+                        <a href="https://www.facebook.com/phuthanes.redsanthia/" target="_blank"
+                            class="p-2 bg-blue-600 text-white rounded-lg hover:opacity-80 transition-all shadow-md"><span
+                                class="material-symbols-outlined text-sm">chat</span> Facebook</a>
+                    </div>
+
+                </div>
+                <div class="col-md-4">
+                    <div style="text-align:center;">
+                        <img src="เซฟ.jpg"
+                            style="width:200px; height:200px; object-fit:cover; border-radius:50%; border:3px solid var(--gold); margin-bottom:20px;"
+                            onerror="this.src='https://via.placeholder.com/200?text=Creator'">
+                        <h3 style="color:var(--gold);">นายศตวรรษ ตอนกลาง ห้องที่9 เลขที่18</h3>
+                        <p style="color:#666;">ID: 68319090018</p>
+                        <p>สาขา เทคโนโลยีคอมพิวเตอร์</p>
+                        <div class="mt-4 flex justify-center sm:justify-start gap-2">
+                            <a href="https://www.facebook.com/jo.save.869350" target="_blank"
+                                class="p-2 bg-blue-600 text-white rounded-lg hover:opacity-80 transition-all shadow-md"><span
+                                    class="material-symbols-outlined text-sm">chat</span> Facebook</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+
+
+        <div class="text-center mt-5">
+            <a href="index.html" class="btn btn-outline-light rounded-pill px-4">
+                <i class="fas fa-arrow-left me-2"></i> กลับหน้าหลัก
+            </a>
+        </div>
+    </div>
+
+    <!-- Cart Sidebar -->
+    <div class="offcanvas offcanvas-end text-white" tabindex="-1" id="cartOffcanvas" style="background: #111;">
+        <div class="offcanvas-header border-bottom border-secondary">
+            <h5 class="offcanvas-title font-tech text-gold">CURRENT LOADOUT</h5>
+            <button type="button" class="btn-close btn-close-white" data-bs-dismiss="offcanvas"></button>
+        </div>
+        <div class="offcanvas-body">
+            <div id="cartItems" class="mb-3"></div>
+            <div class="border-top border-secondary pt-3">
+                <div class="d-flex justify-content-between mb-3">
+                    <span>TOTAL</span>
+                    <span class="text-gold fw-bold" id="cartTotal">฿0</span>
+                </div>
+                <button onclick="window.location.href='Gallery.html'" class="btn btn-gold w-100">CHECKOUT</button>
+            </div>
+        </div>
+    </div>
+    <!-- FEATURES -->
+    <section class="py-5 bg-black bg-opacity-50 border-top border-bottom border-secondary mb-5">
+        <div class="container">
+            <div class="row text-center">
+                <div class="col-md-4 mb-4 feature-box">
+                    <div class="feature-icon"><i class="fas fa-shipping-fast"></i></div>
+                    <h4 class="font-tech text-white">FAST SHIPPING</h4>
+                    <p class="text-muted small">จัดส่งด่วนพิเศษทั่วประเทศ ภายใน 1-2 วันทำการ</p>
+                </div>
+                <div class="col-md-4 mb-4 feature-box">
+                    <div class="feature-icon"><i class="fas fa-lock"></i></div>
+                    <h4 class="font-tech text-white">SECURE PAYMENT</h4>
+                    <p class="text-muted small">ระบบชำระเงินปลอดภัย รองรับ QR Code และปลายทาง</p>
+                </div>
+                <div class="col-md-4 mb-4 feature-box">
+                    <div class="feature-icon"><i class="fas fa-headset"></i></div>
+                    <h4 class="font-tech text-white">24/7 SUPPORT</h4>
+                    <p class="text-muted small">ทีมงานพร้อมให้คำปรึกษาด้านอุปกรณ์ตลอด 24 ชม.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+    <footer class="text-center text-muted py-4 font-tech border-top border-secondary bg-black">
+        <div class="mb-2">
+            <a href="#" class="text-secondary mx-2 hover-gold"><i class="fab fa-facebook fa-lg"></i></a>
+            <a href="#" class="text-secondary mx-2 hover-gold"><i class="fab fa-instagram fa-lg"></i></a>
+            <a href="#" class="text-secondary mx-2 hover-gold"><i class="fab fa-line fa-lg"></i></a>
+        </div>
+        &copy; 2023 TACTICAL OPS. ALL RIGHTS RESERVED.
+    </footer>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="script.js"></script>
+</body>
+
+</html>

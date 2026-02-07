@@ -1,0 +1,163 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>TACTICAL OPS | PROFILE</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="style.css">
+</head>
+<body onload="initProfile()">
+    <div class="bg-grid"></div>
+
+    <nav class="navbar navbar-expand-lg navbar-tactical fixed-top">
+        <div class="container">
+            <a class="navbar-brand text-gold font-military" href="index.html">TACTICAL<span class="text-white">OPS</span></a>
+            <button class="navbar-toggler btn-sm btn-outline-warning" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+                <i class="fas fa-bars"></i>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav ms-auto text-uppercase">
+                    <li class="nav-item"><a class="nav-link" href="index.html">HOME</a></li>
+                    <li class="nav-item"><a class="nav-link" href="Gallery.html">ARMORY</a></li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <div class="container py-5 mt-5">
+        <div class="row">
+            <!-- PROFILE CARD -->
+            <div class="col-lg-4 mb-4">
+                <div class="tactical-card h-100">
+                    <div class="card-body text-center p-4">
+                        <div class="mb-4">
+                            <div class="d-inline-block p-1 border border-warning rounded-circle">
+                                <img src="https://ui-avatars.com/api/?name=User&background=1c1c1c&color=fbbf24&size=128" 
+                                     class="rounded-circle" id="profileImg" width="120" height="120">
+                            </div>
+                        </div>
+                        <h3 class="font-military text-gold mb-1" id="pName">OPERATIVE NAME</h3>
+                        <p class="text-muted font-tech mb-4">ID: <span id="pUser">UNKNOWN</span></p>
+                        
+                        <div class="text-start border-top border-secondary pt-4">
+                            <div class="mb-3">
+                                <small class="text-muted d-block font-tech">CONTACT NO.</small>
+                                <div class="text-white fs-5" id="pPhone">-</div>
+                            </div>
+                            <div class="mb-3">
+                                <small class="text-muted d-block font-tech">SHIPPING ADDRESS</small>
+                                <div class="text-white" id="pAddr">-</div>
+                            </div>
+                        </div>
+
+                        <div class="mt-4">
+                            <button onclick="logout()" class="btn btn-outline-danger w-100 fw-bold">
+                                <i class="fas fa-sign-out-alt me-2"></i> LOGOUT
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- ORDER HISTORY -->
+            <div class="col-lg-8">
+                <div class="tactical-card h-100">
+                    <div class="card-header bg-black border-bottom border-secondary p-3">
+                        <h4 class="font-military text-gold mb-0"><i class="fas fa-history me-2"></i> MISSION LOGS (ORDER HISTORY)</h4>
+                    </div>
+                    <div class="card-body p-0">
+                        <div class="table-responsive">
+                            <table class="table table-dark table-hover mb-0 align-middle">
+                                <thead class="bg-black">
+                                    <tr class="text-gold font-tech">
+                                        <th class="ps-4">ORDER ID</th>
+                                        <th>DATE</th>
+                                        <th>ITEMS</th>
+                                        <th>TOTAL</th>
+                                        <th>STATUS</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="orderHistoryBody">
+                                    <!-- Order Data will be loaded here -->
+                                </tbody>
+                            </table>
+                        </div>
+                        <div id="noOrdersMsg" class="text-center p-5 d-none">
+                            <i class="fas fa-box-open fa-3x text-muted mb-3"></i>
+                            <p class="text-muted font-tech">NO MISSION RECORDS FOUND.</p>
+                            <a href="Gallery.html" class="btn btn-sm btn-gold">GO TO ARMORY</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        function initProfile() {
+            // 1. Check Auth
+            const session = sessionStorage.getItem('tactical_session');
+            if(!session) {
+                window.location.href = 'login.html';
+                return;
+            }
+
+            const user = JSON.parse(session);
+
+            // 2. Render Profile
+            document.getElementById('pName').innerText = user.name || 'OPERATIVE';
+            document.getElementById('pUser').innerText = user.username;
+            document.getElementById('pPhone').innerText = user.phone || 'NOT SPECIFIED';
+            document.getElementById('pAddr').innerText = user.address || 'NOT SPECIFIED';
+            document.getElementById('profileImg').src = `https://ui-avatars.com/api/?name=${user.name}&background=1c1c1c&color=fbbf24&size=128`;
+
+            // 3. Render Orders
+            loadOrderHistory(user);
+        }
+
+        function loadOrderHistory(user) {
+            const allOrders = JSON.parse(localStorage.getItem('tactical_orders')) || [];
+            
+            // Filter orders: Match Name OR Phone (Flexible matching)
+            const myOrders = allOrders.filter(o => 
+                (o.customerName && o.customerName.trim() === user.name) || 
+                (o.customerPhone && o.customerPhone.trim() === user.phone)
+            );
+
+            // Sort newest first
+            myOrders.reverse();
+
+            const tbody = document.getElementById('orderHistoryBody');
+            const noMsg = document.getElementById('noOrdersMsg');
+
+            if (myOrders.length === 0) {
+                tbody.innerHTML = '';
+                noMsg.classList.remove('d-none');
+            } else {
+                noMsg.classList.add('d-none');
+                tbody.innerHTML = myOrders.map(order => `
+                    <tr>
+                        <td class="ps-4 font-monospace text-gold">#${order.id}</td>
+                        <td class="small text-muted">${new Date(order.date).toLocaleDateString()}</td>
+                        <td class="small text-white">${order.items.length} Items</td>
+                        <td class="fw-bold">฿${order.total.toLocaleString()}</td>
+                        <td>
+                            <span class="badge ${order.status === 'COMPLETED' ? 'bg-success' : 'bg-warning text-dark'}">
+                                ${order.status}
+                            </span>
+                        </td>
+                    </tr>
+                `).join('');
+            }
+        }
+
+        function logout() {
+            sessionStorage.removeItem('tactical_session');
+            window.location.href = 'login.html';
+        }
+    </script>
+</body>
+</html>
